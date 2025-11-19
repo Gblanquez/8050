@@ -24,7 +24,8 @@ export default class VoiceAgent {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           agentId: this.agentId,
-        }),
+          clientId: crypto.randomUUID()
+        })
       });
   
       const session = await sessionRes.json();
