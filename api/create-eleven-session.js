@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-
+    // CORS
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -13,11 +13,22 @@ export default async function handler(req, res) {
     }
   
     try {
-
-        console.log("AGENT ID RECEIVED:", req.body.agentId);
-      const { agentId, clientId } = req.body;
+      // ---- MANUAL BODY PARSE (CRITICAL FIX) ----
+      const buffers = [];
+      for await (const chunk of req) {
+        buffers.push(chunk);
+      }
+      const bodyString = Buffer.concat(buffers).toString();
+      const body = JSON.parse(bodyString || "{}");
   
-      if (!agentId) return res.status(400).json({ error: "Missing agentId" });
+      const agentId = body.agentId;
+      const clientId = body.clientId;
+  
+      console.log("AGENT ID RECEIVED:", agentId);
+  
+      if (!agentId) {
+        return res.status(400).json({ error: "Missing agentId" });
+      }
   
       const ELEVEN_API_KEY = process.env.ELEVENLABS_API_KEY;
       if (!ELEVEN_API_KEY) {
@@ -49,6 +60,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         websocket_url: data.websocket_url,
       });
+  
     } catch (err) {
       console.error("Server error:", err);
       return res.status(500).json({ error: "Internal server error" });
