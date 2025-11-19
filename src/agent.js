@@ -1,81 +1,76 @@
+import { Conversation } from "@elevenlabs/client";
+
 export default class VoiceAgent {
-    constructor({ agentId, buttonId, backendUrl }) {
-      this.agentId = agentId;
-      this.buttonId = buttonId;
-      this.backendUrl = backendUrl;
-  
-      this.ws = null;
-      this.audioCtx = null;
+  constructor({ agentId, buttonId }) {
+    this.agentId = agentId;
+    this.buttonId = buttonId;
+
+    this.conversation = null;
+    this.isStarting = false;
+  }
+
+  init() {
+    const btn = document.getElementById(this.buttonId);
+    if (!btn) {
+      console.error(`VoiceAgent: Button #${this.buttonId} not found`);
+      return;
     }
-  
-    init() {
-      const btn = document.getElementById(this.buttonId);
-      if (!btn) {
-        console.error(`VoiceAgent: Button #${this.buttonId} not found`);
-        return;
+
+    btn.addEventListener("click", () => {
+      if (this.conversation) {
+        this.stop();
+      } else {
+        this.start();
       }
-  
-      btn.addEventListener("click", () => this.start());
-    }
-  
-    async start() {
-      const sessionRes = await fetch(this.backendUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agentId: this.agentId,
-          clientId: crypto.randomUUID()
-        })
+    });
+  }
+
+  async start() {
+    if (this.isStarting || this.conversation) return;
+    this.isStarting = true;
+
+    try {
+      // Ask for mic permission explicitly for UX
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      const conversation = await Conversation.startSession({
+        agentId: this.agentId,
+        connectionType: "webrtc", // or "websocket", but webrtc handles audio nicely
+        onConnect: () => {
+          console.log("ElevenLabs agent connected");
+        },
+        onDisconnect: () => {
+          console.log("ElevenLabs agent disconnected");
+          this.conversation = null;
+        },
+        onError: (err) => {
+          console.error("ElevenLabs conversation error:", err);
+        },
+        onMessage: (msg) => {
+          // Text events, transcripts, etc.
+          console.log("ElevenLabs event:", msg);
+        },
       });
-  
-      const session = await sessionRes.json();
-  
-      if (!session.websocket_url) {
-        console.error("Could not create session:", session);
-        return;
-      }
-  
-      this.ws = new WebSocket(session.websocket_url);
-      this.ws.binaryType = "arraybuffer";
-  
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  
-      this.ws.onopen = () => this.handleOpen();
-      this.ws.onmessage = (msg) => this.handleMessage(msg);
-    }
-  
-    async handleOpen() {
-      console.log("Connected to voice agent");
-  
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mic = this.audioCtx.createMediaStreamSource(stream);
-  
-      const processor = this.audioCtx.createScriptProcessor(4096, 1, 1);
-  
-      processor.onaudioprocess = (event) => {
-        const input = event.inputBuffer.getChannelData(0);
-        const int16 = new Int16Array(input.length);
-        for (let i = 0; i < input.length; i++) {
-          int16[i] = input[i] * 32767;
-        }
-        if (this.ws.readyState === WebSocket.OPEN) {
-          this.ws.send(int16);
-        }
-      };
-  
-      mic.connect(processor);
-      processor.connect(this.audioCtx.destination);
-    }
-  
-    async handleMessage(event) {
-      try {
-        const buffer = await this.audioCtx.decodeAudioData(event.data.slice(0));
-        const source = this.audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(this.audioCtx.destination);
-        source.start();
-      } catch (err) {
-        console.error("Audio decode error", err);
-      }
+
+      this.conversation = conversation;
+      console.log("Conversation started");
+    } catch (err) {
+      console.error("Failed to start ElevenLabs conversation:", err);
+    } finally {
+      this.isStarting = false;
     }
   }
+
+  async stop() {
+    if (!this.conversation) return;
+
+    try {
+      await this.conversation.endSession();
+      console.log("Conversation ended");
+    } catch (err) {
+      console.error("Error ending conversation:", err);
+    } finally {
+      this.conversation = null;
+    }
+  }
+}
