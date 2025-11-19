@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   
     try {
 
-    console.log("AGENT ID RECEIVED:", req.body.agentId);
+        console.log("AGENT ID RECEIVED:", req.body.agentId);
       const { agentId, clientId } = req.body;
   
       if (!agentId) return res.status(400).json({ error: "Missing agentId" });
