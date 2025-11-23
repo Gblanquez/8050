@@ -1,5 +1,10 @@
 import "./styles/style.css";
 import VoiceAgent from "./agent";
+import sketchManager from "./sketch/sketch";
+import { startRAF, stopRAF } from "./scroll/scroll";
+
+
+
 
 const agent = new VoiceAgent({
   agentId: "agent_5201kab7gt2rek6ar2vv7kbr2ezw",
@@ -8,6 +13,14 @@ const agent = new VoiceAgent({
 
 document.addEventListener("DOMContentLoaded", () => {
   agent.init();
+
+
+  sketchManager.init(document.body);
+  startRAF()
+
+
+  console.log(sketchManager)
 });
 
-console.log("Hello from VS Code");
+
+
