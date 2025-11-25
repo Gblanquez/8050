@@ -50,21 +50,26 @@ class SketchManager {
   init(container) {
     if (this.isInitialized) return
 
+    this.container = container
+
     this.canvas = document.createElement('canvas')
-    this.canvas.style.position = 'fixed'
+    this.canvas.style.position = 'absolute'
     this.canvas.style.top = '0'
     this.canvas.style.left = '0'
     this.canvas.style.width = '100%'
     this.canvas.style.height = '100%'
     this.canvas.style.pointerEvents = 'none'
-    this.canvas.style.zIndex = '-1'
+    this.canvas.style.zIndex = '1'
     container.appendChild(this.canvas)
 
     this.scene = new THREE.Scene()
 
+    const width = container.clientWidth
+    const height = container.clientHeight
+
     this.camera = new THREE.PerspectiveCamera(
       75,
-      window.innerWidth / window.innerHeight,
+      width / height,
       0.1,
       1000
     )
@@ -75,7 +80,7 @@ class SketchManager {
       antialias: true,
       alpha: true
     })
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.renderer.setSize(width, height)
 
     this.worldGroup = new THREE.Group()
     this.scene.add(this.worldGroup)
@@ -128,7 +133,6 @@ class SketchManager {
     )
 
     this.meshData.forEach((data) => {
-      // more segments so shader bend actually curves the card
       const geometry = new THREE.PlaneGeometry(2, 2, 12, 1)
       const mesh = new THREE.Mesh(geometry, data.material)
 
@@ -176,11 +180,20 @@ class SketchManager {
     window.addEventListener('pointercancel', this.onPointerUpHandler)
   }
 
+  getNormalizedMouse(event) {
+    const rect = this.canvas.getBoundingClientRect()
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      y: -((event.clientY - rect.top) / rect.height) * 2 + 1
+    }
+  }
+
   onPointerDown(event) {
     if (!this.dragEnabled || !this.dragCylinder) return
 
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+    const pos = this.getNormalizedMouse(event)
+    this.mouse.x = pos.x
+    this.mouse.y = pos.y
 
     this.raycaster.setFromCamera(this.mouse, this.camera)
 
@@ -208,8 +221,10 @@ class SketchManager {
   onPointerMove(event) {
     if (!this.isDragging || !this.dragCylinder) return
 
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+    const pos = this.getNormalizedMouse(event)
+    this.mouse.x = pos.x
+    this.mouse.y = pos.y
+
     this.raycaster.setFromCamera(this.mouse, this.camera)
 
     const intersects = this.raycaster.intersectObject(this.dragCylinder, true)
@@ -270,13 +285,17 @@ class SketchManager {
   updateMeshPositions() {}
 
   handleResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight
+    const width = this.container.clientWidth
+    const height = this.container.clientHeight
+
+    this.camera.aspect = width / height
     this.camera.updateProjectionMatrix()
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
+
+    this.renderer.setSize(width, height)
 
     globalSceneManager.materials.forEach((material) => {
       if (material.uniforms.uResolution) {
-        material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight)
+        material.uniforms.uResolution.value.set(width, height)
       }
     })
 

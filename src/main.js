@@ -15,7 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
   agent.init();
 
 
-  sketchManager.init(document.body);
+  const wrap = document.querySelector('.canvas-wrap');
+  sketchManager.init(wrap);
+  
 //   startRAF()
 
 
