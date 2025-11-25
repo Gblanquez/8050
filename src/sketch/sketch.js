@@ -73,7 +73,7 @@ class SketchManager {
       0.1,
       1000
     )
-    this.camera.position.set(0, 0, 5)
+    this.camera.position.set(0, 0, 6)
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,

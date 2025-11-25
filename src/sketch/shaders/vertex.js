@@ -46,7 +46,7 @@ void main()
     );
 
     float sine = sin(PI * cornersProgress);
-    float waves = sine * 0.1 * sin(2.0 * length(uv) + 8.0 * cornersProgress);
+    float waves = sine * 0.1 * sin(2.0 * length(uv) + 9.0 * cornersProgress);
 
     vec3 transformedPosition = position;
     

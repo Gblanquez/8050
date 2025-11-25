@@ -57,7 +57,7 @@ class SceneManager {
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         uQuadSize: { value: new THREE.Vector2(2, 2) },
         uProgress: { value: 0 },
-        uBend: { value: new THREE.Vector3(1.0, 0.0, 0.0) }, // stronger default bend
+        uBend: { value: new THREE.Vector3(1.0, 0.0, 0.0) }, 
         uCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
         uTransitionCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
         hover: { value: new THREE.Vector2(0.5, 0.5) },
@@ -91,9 +91,9 @@ class SceneManager {
     const count = this.meshes.length
     if (count === 0) return
 
-    const meshScaleX = 1.2
-    const meshScaleY = 0.62
-    const meshScaleZ = 0.62
+    const meshScaleX = 1.4
+    const meshScaleY = 0.66
+    const meshScaleZ = 0.66
 
     const meshWidth = 2 * meshScaleX
     const spacing = 0.2
