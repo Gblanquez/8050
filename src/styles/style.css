@@ -31,6 +31,7 @@
 .w-checkbox-input.w--redirected-checked {
     background-image: none !important;
     border-color: transparent !important;
+    box-shadow: none !important;
   }
   
 
