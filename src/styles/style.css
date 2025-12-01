@@ -17,3 +17,12 @@
   .navbar-form-wrapper::-webkit-scrollbar {
     display: none;
   }
+
+.navbar-form-wrapper
+{
+    display: none;
+}
+.navbar-form-wrapper.is-open 
+{
+    display: flex; 
+}

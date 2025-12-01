@@ -1,4 +1,5 @@
-import sketchManager from "./sketch/sketch";
+import sketchManager from "../sketch/sketch";
+import { openForm } from "./form";
 
 export function openMenu() {
     const menuBtn = document.querySelector(".navbar-menu");
@@ -12,6 +13,9 @@ export function openMenu() {
       isOpen = !isOpen;
   
       if (isOpen) {
+
+        openForm()
+
         menuBtn.classList.add("open");
         overlay.style.display = "block";
 

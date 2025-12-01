@@ -2,7 +2,7 @@ import "./styles/style.css";
 import VoiceAgent from "./agent";
 import sketchManager from "./sketch/sketch";
 import { startRAF, stopRAF } from "./scroll/scroll";
-import { openMenu } from "./menu";
+import { openMenu } from "./menu/menu";
 
 
 
