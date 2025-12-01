@@ -3,3 +3,17 @@
     opacity: 0;
     pointer-events: none;
 }
+
+.pointer-none{
+    pointer-events: none;
+}
+
+
+.navbar-form-wrapper {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; 
+  }
+  
+  .navbar-form-wrapper::-webkit-scrollbar {
+    display: none;
+  }
