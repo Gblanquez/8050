@@ -5,12 +5,12 @@ export function openForm() {
   
     if (!openTrigger || !formWrapper) return;
   
-    // OPEN
+
     openTrigger.addEventListener("click", () => {
       formWrapper.classList.add("is-open");
     });
   
-    // CLOSE
+
     if (closeTrigger) {
       closeTrigger.addEventListener("click", () => {
         formWrapper.classList.remove("is-open");

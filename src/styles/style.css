@@ -26,3 +26,14 @@
 {
     display: flex; 
 }
+
+
+.w-checkbox-input.w--redirected-checked {
+    background-image: none !important;
+    border-color: transparent !important;
+  }
+  
+
+  .w-checkbox-input {
+    background-image: none !important;
+  }
