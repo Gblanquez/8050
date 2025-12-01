@@ -2,6 +2,7 @@ import "./styles/style.css";
 import VoiceAgent from "./agent";
 import sketchManager from "./sketch/sketch";
 import { startRAF, stopRAF } from "./scroll/scroll";
+import { openMenu } from "./menu";
 
 
 
@@ -13,10 +14,7 @@ const agent = new VoiceAgent({
 
 document.addEventListener("DOMContentLoaded", () => {
   agent.init();
-
-
-  const wrap = document.querySelector('.canvas-wrap');
-  sketchManager.init(wrap);
+  openMenu()
   
 //   startRAF()
 
