@@ -1,10 +1,19 @@
 export function openForm() {
-    const trigger = document.querySelector('[data-a="contact-trigger"]');
+    const openTrigger = document.querySelector('[data-a="contact-trigger"]');
+    const closeTrigger = document.querySelector('[data-a="close-trigger"]');
     const formWrapper = document.querySelector('.navbar-form-wrapper');
   
-    if (!trigger || !formWrapper) return;
+    if (!openTrigger || !formWrapper) return;
   
-    trigger.addEventListener("click", () => {
-      formWrapper.classList.toggle("is-open");
+    // OPEN
+    openTrigger.addEventListener("click", () => {
+      formWrapper.classList.add("is-open");
     });
+  
+    // CLOSE
+    if (closeTrigger) {
+      closeTrigger.addEventListener("click", () => {
+        formWrapper.classList.remove("is-open");
+      });
+    }
   }
