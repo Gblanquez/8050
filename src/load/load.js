@@ -21,7 +21,6 @@ export function loadPage() {
 
   tl.set(content, {
     opacity: 0,
-    display: "none",
     position: "relative",
     zIndex: 102
   });
@@ -67,17 +66,14 @@ export function loadPage() {
 
 tl.to(content, {
     opacity: 1,
-    display: "block",
-    position: "relative",
-    zIndex: 102,
-    duration: 0,
-    ease: "power3.inOut",
-    onComplete: () => {
+    duration: 0.4,
+    ease: "expo.out",
+    onStart: () => {
         animateTitle()
         linesAnimation()
         bodyTextAnimation()
         labelTextAnimation()
         navIn()
     }
-},2.4);
+},2.3);
 }

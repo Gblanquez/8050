@@ -65,6 +65,13 @@
     opacity: 0;
   }
 
+  [data-a="content"]
+  {
+
+    opacity: 0;
+
+  }
+
 
   .nv-line-wrap
   {
