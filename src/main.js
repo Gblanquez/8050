@@ -3,7 +3,7 @@ import VoiceAgent from "./agent";
 import sketchManager from "./sketch/sketch";
 import { startRAF, stopRAF } from "./scroll/scroll";
 import { openMenu } from "./menu/menu";
-
+import { loadPage } from "./load/load";
 
 
 
@@ -15,8 +15,9 @@ const agent = new VoiceAgent({
 document.addEventListener("DOMContentLoaded", () => {
   agent.init();
   openMenu()
+  loadPage()
   
-//   startRAF()
+  startRAF()
 
 
   console.log(sketchManager)

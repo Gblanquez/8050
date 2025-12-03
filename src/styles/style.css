@@ -8,6 +8,11 @@
     pointer-events: none;
 }
 
+.text-indent
+{
+  width: 22vw;
+}
+
 
 .navbar-form-wrapper {
     -webkit-overflow-scrolling: touch;
@@ -37,4 +42,25 @@
 
   .w-checkbox-input {
     background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  ::selection {
+    background: #d60000;
+  }
+
+  [data-a="wrapper"] {
+    overflow: hidden;
+    will-change: clip-path, opacity;
+    background-color: white;
+  }
+
+  [data-a="box-right"]
+  {
+    opacity: 0;
+  }
+
+  [data-a="box-left"]
+  {
+    opacity: 0;
   }
