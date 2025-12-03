@@ -64,3 +64,11 @@
   {
     opacity: 0;
   }
+
+
+  .nv-line-wrap
+  {
+    opacity: 0;
+    transform: scaleX(0);
+    will-change: auto;
+  }
