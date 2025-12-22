@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { fragmentShader } from './shaders/fragment.js'
 import { vertexShader } from './shaders/vertex.js'
+import gsap from 'gsap'
 
 let sceneInstance = null
 
@@ -45,15 +46,17 @@ class SceneManager {
     const material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
+      depthWrite: false,
       transparent: true,
       side: THREE.DoubleSide,
       uniforms: {
         uTexture: { value: null },
         uTextureSize: { value: new THREE.Vector2(1, 1) },
-        uOpacity: { value: 1 },
+        uOpacity: { value: 0 },
         uPlaneSize: { value: new THREE.Vector2(1, 1) },
         uImageSize: { value: new THREE.Vector2(1, 1) },
         uRadius: { value: 1 },
+        uReveal: { value: 0 },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         uQuadSize: { value: new THREE.Vector2(2, 2) },
         uProgress: { value: 0 },
@@ -163,6 +166,36 @@ class SceneManager {
   }
 
   updateMeshPositions() {}
+
+  animateMenuMeshes(isOpen = true) {
+    if (!this.meshes.length) return
+  
+    const opacityUniforms = this.meshes
+      .map(m => m.material?.uniforms?.uOpacity)
+      .filter(Boolean)
+  
+    const revealUniforms = this.meshes
+      .map(m => m.material?.uniforms?.uReveal)
+      .filter(Boolean)
+  
+    if (!opacityUniforms.length && !revealUniforms.length) return
+  
+    gsap.killTweensOf([...opacityUniforms, ...revealUniforms])
+  
+    gsap.to(opacityUniforms, {
+      value: isOpen ? 1 : 0,
+      duration: 1.4,
+      ease: "power3.out",
+      stagger: { each: 0.04, from: "start" }
+    })
+  
+    gsap.to(revealUniforms, {
+      value: isOpen ? 1 : 0,
+      duration: 1.4,
+      ease: "power3.out",
+      stagger: { each: 0.14, from: "start" }
+    })
+  }
 }
 
 const globalSceneManager = new SceneManager()

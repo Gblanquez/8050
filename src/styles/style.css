@@ -72,6 +72,22 @@
 
   }
 
+  .navbar-o-w.open
+  {
+    display: block;
+  }
+
+  .parent-mask
+  {
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    opacity: 0;
+  }
+
+  .load-wrapper.hide
+  {
+    display: none;
+  }
+
 
   .nv-line-wrap
   {

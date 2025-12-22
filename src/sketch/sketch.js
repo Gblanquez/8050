@@ -147,7 +147,7 @@ class SketchManager {
 
   createDragCylinder() {
     const radius = 3.5
-    const height = 4
+    const height = 3
     const geometry = new THREE.CylinderGeometry(radius, radius, height, 32)
     const material = new THREE.MeshBasicMaterial({
       visible: false,
@@ -358,6 +358,44 @@ class SketchManager {
 
     this.meshData = []
     globalSceneManager.meshes = []
+  }
+
+
+  animateMenuMeshes(isOpen = true) {
+    if (!globalSceneManager.isInitialized) return
+    globalSceneManager.animateMenuMeshes(isOpen)
+  }
+
+  animateMenuIntro() {
+    if (!this.worldGroup) return;
+  
+    this.dragEnabled = false;
+  
+    // start angle
+    const state = { angle: 0 };
+  
+    gsap.killTweensOf(state);
+  
+    gsap.to(state, {
+      angle: Math.PI * 2, // full rotation
+      duration: 1.6,
+      ease: "power2.out",
+      onUpdate: () => {
+        // apply rotation exactly like drag
+        this.rotationQuaternion.setFromAxisAngle(
+          this.rotationAxis,
+          state.angle - (this._lastIntroAngle || 0)
+        );
+  
+        this.worldGroup.quaternion.multiply(this.rotationQuaternion);
+  
+        this._lastIntroAngle = state.angle;
+      },
+      onComplete: () => {
+        this._lastIntroAngle = 0;
+        this.dragEnabled = true;
+      }
+    });
   }
 }
 

@@ -5,6 +5,7 @@ varying vec2 vSize;
 uniform sampler2D uTexture;
 uniform vec2 uTextureSize;
 uniform float uProgress;
+uniform float uOpacity;
 
 vec2 getUV(vec2 uv, vec2 textureSize, vec2 quadSize){
     vec2 tempUV = uv - vec2(0.5);
@@ -38,6 +39,12 @@ void main()
     if(correctUV.x < 0.0 || correctUV.x > 1.0 || correctUV.y < 0.0 || correctUV.y > 1.0) {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     } else {
+
+        textureColor.a *= uOpacity;
+
+
+        textureColor.rgb *= textureColor.a;
+
         gl_FragColor = textureColor;
     }
 }

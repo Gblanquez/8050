@@ -9,6 +9,7 @@ uniform vec4 uCorners;
 uniform vec4 uTransitionCorners;  
 uniform vec2 uResolution;
 uniform vec2 uQuadSize;
+uniform float uReveal;
 
 vec3 applyCornerDistortion(vec3 pos, vec2 uv, vec4 corners) {
     float topLeft = (1.0 - uv.x) * uv.y;
@@ -49,12 +50,15 @@ void main()
     float waves = sine * 0.1 * sin(2.0 * length(uv) + 9.0 * cornersProgress);
 
     vec3 transformedPosition = position;
-    
+
     // drag corner twist
     transformedPosition = applyCornerDistortion(transformedPosition, uv, uCorners);
 
     // constant bend along the card, like RW
     transformedPosition = bendVertex(transformedPosition, uBend);
+
+    float bottomY = -uQuadSize.y * 0.5;
+    transformedPosition.y = mix(bottomY, transformedPosition.y, uReveal);
 
     vec4 defaultState = modelViewMatrix * vec4(transformedPosition, 1.0);
     vec4 fullScreenState = vec4(position, 1.0);

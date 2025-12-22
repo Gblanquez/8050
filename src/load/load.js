@@ -44,7 +44,7 @@ export function loadPage() {
       onComplete() {
         if (loadWrapper) {
 
-
+            // loadWrapper.classList.add('hide')
         }
       }
     });
@@ -53,11 +53,13 @@ export function loadPage() {
   gsap.set(wrapper, {
     clipPath: "polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)",
     rotateZ: -38,
+    opacity: 0
   });
 
   tl.to(wrapper, {
     clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
     rotateZ: 0,
+    opacity: 1,
     duration: 1.4,
     ease: "power3.out",
   },
@@ -75,5 +77,5 @@ tl.to(content, {
         labelTextAnimation()
         navIn()
     }
-},2.3);
+},2.4);
 }
