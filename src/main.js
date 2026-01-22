@@ -4,6 +4,8 @@ import sketchManager from "./sketch/sketch";
 import { startRAF, stopRAF } from "./scroll/scroll";
 import { openMenu } from "./menu/menu";
 import { loadPage } from "./load/load";
+import linkUnderline from "./animations/linksU";
+import workHome from "./work/work";
 
 
 
@@ -15,8 +17,9 @@ const agent = new VoiceAgent({
 document.addEventListener("DOMContentLoaded", () => {
   agent.init();
   openMenu()
+  workHome()
   loadPage()
-  
+  linkUnderline()
   startRAF()
 
 
