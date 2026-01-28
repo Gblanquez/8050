@@ -7,8 +7,9 @@ gsap.registerPlugin(Observer);
 export default function workHome() {
   const root = document.querySelector(".project-observer");
   const line = document.querySelector(".project-ob-line");
-  const titles = gsap.utils.toArray(".p-ob-item");       // left stacked titles
-  const images = gsap.utils.toArray(".projects-item");   // middle list (ALL visible)
+
+  const titles = gsap.utils.toArray(".p-ob-item");
+  const images = gsap.utils.toArray(".projects-item");
 
   if (!root || !line || !titles.length || !images.length) return;
 
@@ -16,12 +17,28 @@ export default function workHome() {
   const t = titles.slice(0, count);
   const im = images.slice(0, count);
 
+  const pad2 = (n) => String(n).padStart(2, "0");
+
   // stack titles: show only first
   gsap.set(t, { autoAlpha: 0 });
   gsap.set(t[0], { autoAlpha: 1 });
 
   let current = 0;
   let raf = null;
+
+  const updateNumbersForTitle = (idx) => {
+    const title = t[idx];
+    if (!title) return;
+
+    const cp = title.querySelector('[data-a="cp"]');
+    const fp = title.querySelector('[data-a="fp"]');
+
+    if (cp) cp.textContent = pad2(idx + 1);
+    if (fp) fp.textContent = pad2(count);
+  };
+
+  // init numbers for first title
+  updateNumbersForTitle(0);
 
   const lineY = () => {
     const r = line.getBoundingClientRect();
@@ -48,14 +65,13 @@ export default function workHome() {
   const show = (next) => {
     if (next === current) return;
 
-    // keep it CLEAN: no timeline needed
-    gsap.killTweensOf(t[current]);
-    gsap.killTweensOf(t[next]);
-
     gsap.set(t[current], { autoAlpha: 0 });
     gsap.set(t[next], { autoAlpha: 1 });
 
     current = next;
+
+    // ✅ update numbers INSIDE active title
+    updateNumbersForTitle(current);
   };
 
   const update = () => {
@@ -68,7 +84,6 @@ export default function workHome() {
     raf = requestAnimationFrame(update);
   };
 
-  // ✅ Observer just “listens” and triggers updates (doesn't turn it into a slider)
   const obs = Observer.create({
     target: window,
     type: "scroll,wheel,touch",
@@ -79,7 +94,6 @@ export default function workHome() {
 
   window.addEventListener("resize", requestUpdate);
 
-  // initial sync (page could load mid-scroll)
   requestUpdate();
 
   return {
