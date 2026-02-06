@@ -148,7 +148,7 @@ class SketchManager {
   createDragCylinder() {
     const radius = 3.5
     const height = 3
-    const geometry = new THREE.CylinderGeometry(radius, radius, height, 32)
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, 90)
     const material = new THREE.MeshBasicMaterial({
       visible: false,
       side: THREE.DoubleSide,

@@ -16,11 +16,14 @@ const agent = new VoiceAgent({
 
 document.addEventListener("DOMContentLoaded", () => {
   agent.init();
-  openMenu()
-  workHome()
-  loadPage()
-  linkUnderline()
+  // openMenu()
+  // workHome()
+  // loadPage()
+  // linkUnderline()
   startRAF()
+  const wrap = document.querySelector(".home-main");
+  sketchManager.init(wrap);
+  sketchManager.animateMenuMeshes(true);
 
 
   console.log(sketchManager)

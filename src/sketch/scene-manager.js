@@ -95,11 +95,11 @@ class SceneManager {
     if (count === 0) return
 
     const meshScaleX = 1.4
-    const meshScaleY = 0.66
-    const meshScaleZ = 0.66
+    const meshScaleY = 0.6
+    const meshScaleZ = 0.6
 
-    const meshWidth = 2 * meshScaleX
-    const spacing = 0.2
+    const meshWidth = 3 * meshScaleX
+    const spacing = 0.01
 
     const totalWidth = count * (meshWidth + spacing)
     const radius = totalWidth / (2 * Math.PI)
