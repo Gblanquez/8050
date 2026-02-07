@@ -39,6 +39,10 @@ class SketchManager {
     this.velocityMultiplier = 0.8
     this.dampingFactor = 0.95
     this.minVelocity = 0.001
+    this.scrollVelocityScale = 0.0015
+    this.scrollVelocityClamp = 0.35
+    this.scrollCornerScale = 0.9
+    this.lastWheelTime = 0
 
     this.dragEnabled = true
     this.startTime = performance.now() / 1000
@@ -95,6 +99,7 @@ class SketchManager {
     this.setupMeshes()
     this.createDragCylinder()
     this.setupDragListeners()
+    this.setupWheelListener()
 
     window.addEventListener('resize', () => this.handleResize())
 
@@ -178,6 +183,11 @@ class SketchManager {
     window.addEventListener('pointermove', this.onPointerMoveHandler)
     window.addEventListener('pointerup', this.onPointerUpHandler)
     window.addEventListener('pointercancel', this.onPointerUpHandler)
+  }
+
+  setupWheelListener() {
+    this.onWheelHandler = this.onWheel.bind(this)
+    window.addEventListener('wheel', this.onWheelHandler, { passive: true })
   }
 
   getNormalizedMouse(event) {
@@ -282,6 +292,32 @@ class SketchManager {
     this.currentRotationVelocity *= this.velocityMultiplier
   }
 
+  onWheel(event) {
+    if (!this.dragEnabled || this.isDragging) return
+
+    const currentTime = performance.now()
+    const deltaTime = Math.max((currentTime - this.lastWheelTime) / 1000, 0.016)
+    this.lastWheelTime = currentTime
+
+    const modeFactor = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1
+    const wheelVelocity = (event.deltaY * modeFactor) / deltaTime
+    const scaledVelocity = THREE.MathUtils.clamp(
+      wheelVelocity * this.scrollVelocityScale,
+      -this.scrollVelocityClamp,
+      this.scrollVelocityClamp
+    )
+
+    this.currentRotationVelocity =
+      this.currentRotationVelocity * 0.8 + scaledVelocity * 0.2
+
+    const targetCorner = THREE.MathUtils.clamp(
+      scaledVelocity * this.scrollCornerScale,
+      -0.6,
+      0.6
+    )
+    this.cornerAmount = targetCorner
+  }
+
   updateMeshPositions() {}
 
   handleResize() {
@@ -355,6 +391,7 @@ class SketchManager {
     window.removeEventListener('pointermove', this.onPointerMoveHandler)
     window.removeEventListener('pointerup', this.onPointerUpHandler)
     window.removeEventListener('pointercancel', this.onPointerUpHandler)
+    window.removeEventListener('wheel', this.onWheelHandler)
 
     this.meshData = []
     globalSceneManager.meshes = []
