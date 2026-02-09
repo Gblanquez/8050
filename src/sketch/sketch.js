@@ -39,9 +39,6 @@ class SketchManager {
     this.velocityMultiplier = 0.8
     this.dampingFactor = 0.95
     this.minVelocity = 0.001
-    this.scrollVelocityScale = 0.0015
-    this.scrollVelocityClamp = 0.35
-    this.scrollCornerScale = 0.9
     this.lastWheelTime = 0
 
     this.dragEnabled = true
@@ -296,26 +293,25 @@ class SketchManager {
     if (!this.dragEnabled || this.isDragging) return
 
     const currentTime = performance.now()
-    const deltaTime = Math.max((currentTime - this.lastWheelTime) / 1000, 0.016)
+    const deltaTime = Math.max((currentTime - this.lastWheelTime) / 1000, 0.001)
     this.lastWheelTime = currentTime
 
+    // raw delta -> velocity, same idea as dragVelocity = signedAngle / deltaTime
     const modeFactor = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1
-    const wheelVelocity = (event.deltaY * modeFactor) / deltaTime
-    const scaledVelocity = THREE.MathUtils.clamp(
-      wheelVelocity * this.scrollVelocityScale,
-      -this.scrollVelocityClamp,
-      this.scrollVelocityClamp
-    )
+    const scrollVelocity = (event.deltaY * modeFactor) * 0.002 / deltaTime
 
-    this.currentRotationVelocity =
-      this.currentRotationVelocity * 0.8 + scaledVelocity * 0.2
+    // smooth exactly like drag
+    this.currentRotationVelocity = this.currentRotationVelocity * 0.8 + scrollVelocity * 0.2
 
-    const targetCorner = THREE.MathUtils.clamp(
-      scaledVelocity * this.scrollCornerScale,
-      -0.6,
-      0.6
+    // corner distortion from velocity, same as drag
+    this.cornerAmount = THREE.MathUtils.clamp(scrollVelocity * 0.3, -0.6, 0.6)
+
+    // apply rotation directly, just like drag does in onPointerMove
+    this.rotationQuaternion.setFromAxisAngle(
+      this.rotationAxis,
+      this.currentRotationVelocity * 0.1
     )
-    this.cornerAmount = targetCorner
+    this.worldGroup.quaternion.multiply(this.rotationQuaternion)
   }
 
   updateMeshPositions() {}
