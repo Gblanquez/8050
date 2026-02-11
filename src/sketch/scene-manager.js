@@ -38,36 +38,44 @@ class SceneManager {
     this.meshes = []
   }
 
-  createMaterial(imageUrl) {
-    if (this.materials.has(imageUrl)) {
-      return this.materials.get(imageUrl)
+  makeUniforms(texture, w, h) {
+    return {
+      uTexture: { value: texture },
+      uTextureSize: { value: new THREE.Vector2(w, h) },
+      uOpacity: { value: 0 },
+      uPlaneSize: { value: new THREE.Vector2(1, 1) },
+      uImageSize: { value: new THREE.Vector2(w, h) },
+      uRadius: { value: 1 },
+      uReveal: { value: 0 },
+      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uQuadSize: { value: new THREE.Vector2(2, 2) },
+      uProgress: { value: 0 },
+      uBend: { value: new THREE.Vector3(1.0, 0.0, 0.0) },
+      uCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
+      uTransitionCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
+      hover: { value: new THREE.Vector2(0.5, 0.5) },
+      hoverState: { value: 1.0 },
+      time: { value: 0 }
     }
+  }
 
-    const material = new THREE.ShaderMaterial({
+  makeMaterial(uniforms) {
+    return new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       depthWrite: false,
       transparent: true,
       side: THREE.DoubleSide,
-      uniforms: {
-        uTexture: { value: null },
-        uTextureSize: { value: new THREE.Vector2(1, 1) },
-        uOpacity: { value: 0 },
-        uPlaneSize: { value: new THREE.Vector2(1, 1) },
-        uImageSize: { value: new THREE.Vector2(1, 1) },
-        uRadius: { value: 1 },
-        uReveal: { value: 0 },
-        uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        uQuadSize: { value: new THREE.Vector2(2, 2) },
-        uProgress: { value: 0 },
-        uBend: { value: new THREE.Vector3(1.0, 0.0, 0.0) }, 
-        uCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
-        uTransitionCorners: { value: new THREE.Vector4(0, 0, 0, 0) },
-        hover: { value: new THREE.Vector2(0.5, 0.5) },
-        hoverState: { value: 1.0 },
-        time: { value: 0 }
-      }
+      uniforms
     })
+  }
+
+  createMaterial(imageUrl) {
+    if (this.materials.has(imageUrl)) {
+      return this.materials.get(imageUrl)
+    }
+
+    const material = this.makeMaterial(this.makeUniforms(null, 1, 1))
 
     this.textureLoader.load(imageUrl, (texture) => {
       texture.minFilter = THREE.LinearFilter
@@ -75,18 +83,43 @@ class SceneManager {
       material.uniforms.uTexture.value = texture
 
       if (texture.image && texture.image.width && texture.image.height) {
-        material.uniforms.uTextureSize.value.set(
-          texture.image.width,
-          texture.image.height
-        )
-        material.uniforms.uImageSize.value.set(
-          texture.image.width,
-          texture.image.height
-        )
+        material.uniforms.uTextureSize.value.set(texture.image.width, texture.image.height)
+        material.uniforms.uImageSize.value.set(texture.image.width, texture.image.height)
       }
     })
 
     this.materials.set(imageUrl, material)
+    return material
+  }
+
+  createVideoMaterial(src) {
+    if (this.materials.has(src)) return this.materials.get(src)
+
+    // create our own video element with crossOrigin set before loading
+    const video = document.createElement('video')
+    video.crossOrigin = 'anonymous'
+    video.src = src
+    video.autoplay = true
+    video.loop = true
+    video.muted = true
+    video.playsInline = true
+    video.setAttribute('playsinline', '')
+    video.style.display = 'none'
+    document.body.appendChild(video)
+    video.play().catch(() => {})
+
+    const material = this.makeMaterial(this.makeUniforms(null, 1920, 1080))
+
+    video.addEventListener('loadeddata', () => {
+      const texture = new THREE.VideoTexture(video)
+      texture.minFilter = THREE.LinearFilter
+      texture.magFilter = THREE.LinearFilter
+      material.uniforms.uTexture.value = texture
+      material.uniforms.uTextureSize.value.set(video.videoWidth, video.videoHeight)
+      material.uniforms.uImageSize.value.set(video.videoWidth, video.videoHeight)
+    }, { once: true })
+
+    this.materials.set(src, material)
     return material
   }
 
@@ -148,18 +181,28 @@ class SceneManager {
   }
 
   updateMeshes() {
-    const els = document.querySelectorAll(".img")
+    const wraps = document.querySelectorAll(".img-wrap")
     this.meshes = []
 
-    els.forEach((el, index) => {
-      const imageUrl = el.src
-      this.meshes.push({
-        id: `mesh-${index}`,
-        element: el,
-        imageUrl,
-        material: this.createMaterial(imageUrl),
-        matrix: null
-      })
+    wraps.forEach((wrap, index) => {
+      const videoSrc = wrap.getAttribute('data-video-src')
+      const imgEl = wrap.querySelector(".img")
+
+      if (videoSrc) {
+        this.meshes.push({
+          id: `mesh-${index}`,
+          element: wrap,
+          material: this.createVideoMaterial(videoSrc),
+          matrix: null
+        })
+      } else if (imgEl) {
+        this.meshes.push({
+          id: `mesh-${index}`,
+          element: imgEl,
+          material: this.createMaterial(imgEl.src),
+          matrix: null
+        })
+      }
     })
 
     this.createCircleMatrices()
