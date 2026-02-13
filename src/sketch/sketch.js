@@ -331,6 +331,8 @@ class SketchManager {
       }
     })
 
+    if (this._loader) this._loader.handleResize()
+
     setTimeout(() => this.setupMeshes(), 100)
   }
 

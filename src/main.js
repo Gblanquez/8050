@@ -1,6 +1,7 @@
 import "./styles/style.css";
 import VoiceAgent from "./agent";
 import sketchManager from "./sketch/sketch";
+import LoadManager from "./sketch/load-manager";
 import { startRAF, stopRAF } from "./scroll/scroll";
 import { openMenu } from "./menu/menu";
 import { loadPage } from "./load/load";
@@ -20,14 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // workHome()
   // loadPage()
   // linkUnderline()
-  startRAF()
+  // startRAF()
+
   const wrap = document.querySelector(".home-main");
   sketchManager.init(wrap);
-  sketchManager.animateMenuMeshes(true);
 
+  // Background plane — comes in from y:110% with staggered corners, stays permanently
+  const loader = new LoadManager(sketchManager.scene, sketchManager.camera);
+  loader.init();
 
-  console.log(sketchManager)
+  // Expose for resize
+  sketchManager._loader = loader;
+
+  // Plane slides in, then start the carousel
+  loader.play(() => {
+    sketchManager.animateMenuMeshes(true);
+  });
 });
-
-
-

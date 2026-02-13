@@ -13,6 +13,13 @@
   width: 22vw;
 }
 
+body{
+  background: #DC0000;
+}
+
+.home-content{
+  /* z-index: 3000; */
+}
 
 .navbar-form-wrapper {
     -webkit-overflow-scrolling: touch;
@@ -95,3 +102,6 @@
     transform: scaleX(0);
     will-change: auto;
   }
+
+
+  
