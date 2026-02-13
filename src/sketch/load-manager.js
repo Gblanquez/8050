@@ -23,7 +23,7 @@ class LoadManager {
       uBottomLeft:  { value: 0 },
       uBottomRight: { value: 0 },
       uResolution:  { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      uColor:       { value: new THREE.Color('#D9D9D9') }
+      uColor:       { value: new THREE.Color('#F7F7F7') }
     }
 
     const mat = new THREE.ShaderMaterial({

@@ -17,8 +17,9 @@ body{
   background: #DC0000;
 }
 
-.home-content{
-  /* z-index: 3000; */
+.home-content,
+.home-content-child{
+  z-index: 3000;
 }
 
 .navbar-form-wrapper {
