@@ -406,28 +406,31 @@ class SketchManager {
   
     this.dragEnabled = false;
   
-    // start angle
     const state = { angle: 0 };
   
     gsap.killTweensOf(state);
   
     gsap.to(state, {
-      angle: Math.PI * 2, // full rotation
-      duration: 1.6,
+      angle: -Math.PI * 2, // full -360° spin
+      duration: 1.8,
       ease: "power2.out",
       onUpdate: () => {
-        // apply rotation exactly like drag
+        const delta = state.angle - (this._lastIntroAngle || 0);
+
         this.rotationQuaternion.setFromAxisAngle(
           this.rotationAxis,
-          state.angle - (this._lastIntroAngle || 0)
+          delta
         );
-  
         this.worldGroup.quaternion.multiply(this.rotationQuaternion);
+
+        // drive corner distortion from spin velocity, same feel as fast drag
+        this.cornerAmount = THREE.MathUtils.clamp(delta * 10, -0.6, 0.6);
   
         this._lastIntroAngle = state.angle;
       },
       onComplete: () => {
         this._lastIntroAngle = 0;
+        this.cornerAmount = 0;
         this.dragEnabled = true;
       }
     });

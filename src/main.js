@@ -33,8 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Expose for resize
   sketchManager._loader = loader;
 
-  // Plane slides in, then start the carousel
+  // Plane slides in, then reveal meshes + spin carousel
   loader.play(() => {
     sketchManager.animateMenuMeshes(true);
+    sketchManager.animateMenuIntro();
   });
 });
