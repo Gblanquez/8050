@@ -4,20 +4,24 @@ import { SplitText } from "gsap/SplitText"
 gsap.registerPlugin(SplitText)
 
 export function textIntro() {
-  // Title — split into lines, y:110% → 0%
+  // Title — split into chars, animate from offset/rotated state to rest
   document.querySelectorAll('[data-a="title"]').forEach((el) => {
     gsap.set(el, { opacity: 1 })
     SplitText.create(el, {
       type: "lines",
       autoSplit: true,
-      mask: "lines",
       onSplit: (self) => {
-        gsap.set(self.lines, { y: "110%" })
+        gsap.set(self.lines, { x: '-10%', y: '110%', rotateX: 72, rotateY: 45, rotateZ: 4, opacity: 0 })
         return gsap.to(self.lines, {
-          y: "0%",
-          stagger: 0.05,
-          duration: 0.9,
-          ease: "power3.out"
+          x: '0%',
+          y: '0%',
+          rotateX: 0,
+          rotateY: 0,
+          rotateZ: 0,
+          opacity: 1,
+          duration: 1.6,
+          ease: 'power4.inOut',
+          stagger: { each: 0.03 }
         })
       }
     })
@@ -50,7 +54,7 @@ export function textIntro() {
 
   // Project lines — scaleX:0 → 1, origin right
   gsap.fromTo(".project-line",
-    { scaleX: 0, opacity: 0, transformOrigin: "right center" },
+    { scaleX: 0, opacity: 0, transformOrigin: "left center" },
     { scaleX: 1, opacity: 1, stagger: 0.04, duration: 1.2, ease: "power3.out" }
   )
 }
