@@ -7,6 +7,7 @@ import { openMenu } from "./menu/menu";
 import { loadPage } from "./load/load";
 import linkUnderline from "./animations/linksU";
 import workHome from "./work/work";
+import { textIntro } from "./animations/textIntro";
 
 
 
@@ -33,9 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Expose for resize
   sketchManager._loader = loader;
 
-  // Plane slides in, then reveal meshes + spin carousel
+  // Plane slides in, then reveal meshes + spin carousel + text
   loader.play(() => {
     sketchManager.animateMenuMeshes(true);
     sketchManager.animateMenuIntro();
+    textIntro();
   });
 });
