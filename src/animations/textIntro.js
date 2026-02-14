@@ -12,7 +12,7 @@ export function textIntro() {
       autoSplit: true,
       // mask: "lines",
       onSplit: (self) => {
-        gsap.set(self.chars, { x: '-50%', y: '110%', rotateX: 72, rotateY: 45, rotateZ: 4, opacity: 0 })
+        gsap.set(self.chars, { x: '-20%', y: '110%', rotateX: 72, rotateY: 45, rotateZ: 4, opacity: 0 })
         return gsap.to(self.chars, {
           x: '0%',
           y: '0%',
