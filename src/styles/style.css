@@ -15,6 +15,7 @@
 
 body{
   background: #DC0000;
+  overflow: hidden;
 }
 
 .home-content,
