@@ -21,7 +21,19 @@ body{
 .home-content,
 .home-content-child{
   z-index: 3000;
+  mix-blend-mode: difference;
+  color: white;
 }
+
+.project-link-parent
+{
+  mix-blend-mode: normal;
+  color: white;
+}
+
+
+
+
 
 
 
